@@ -1,8 +1,8 @@
 defmodule ElixirApiWeb.AccountController do
   use ElixirApiWeb, :controller
 
-  alias ElixirApi.Accounts
-  alias ElixirApi.Accounts.Account
+  alias ElixirApi.Auth.Guardian
+  alias ElixirApi.{Accounts, Accounts.Account, Users, Users.User}
 
   action_fallback ElixirApiWeb.FallbackController
 
@@ -12,7 +12,9 @@ defmodule ElixirApiWeb.AccountController do
   end
 
   def create(conn, %{"account" => account_params}) do
-    with {:ok, %Account{} = account} <- Accounts.create_account(account_params) do
+    with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(account),
+         {:ok, %User{} = _user} <- Users.create_user(account, account_params) do
       conn
       |> put_status(:created)
       |> render(:show, account: account)
