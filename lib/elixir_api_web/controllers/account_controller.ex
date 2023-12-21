@@ -1,7 +1,7 @@
 defmodule ElixirApiWeb.AccountController do
   use ElixirApiWeb, :controller
 
-  alias ElixirApiWeb.Auth.Guardian
+  alias ElixirApiWeb.{Auth.Guardian, Auth.ErrorResponse}
   alias ElixirApi.{Accounts, Accounts.Account, Users, Users.User}
 
   action_fallback ElixirApiWeb.FallbackController
@@ -18,6 +18,18 @@ defmodule ElixirApiWeb.AccountController do
       conn
       |> put_status(:created)
       |> render(:account_with_token, %{account: account, token: token})
+    end
+  end
+
+  def sign_in(conn, %{"email" => email, "hash_password" => hash_password}) do
+    case Guardian.authenticate(email, hash_password) do
+      {:ok, account, token} ->
+        conn
+        |> put_status(:ok)
+        |> render(:account_with_token, %{account: account, token: token})
+
+      {:error, _reason} ->
+        raise ErrorResponse.Unauthorized, message: "Email or Password is incorrect."
     end
   end
 
