@@ -15,6 +15,11 @@ defmodule ElixirApiWeb.AccountJSON do
     %{data: data(account)}
   end
 
+  def account_with_token(%{account: account, token: token}) do
+    data(account)
+    |> Map.merge(%{token: token})
+  end
+
   defp data(%Account{} = account) do
     %{
       id: account.id,

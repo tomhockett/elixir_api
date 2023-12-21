@@ -51,7 +51,7 @@ defmodule ElixirApi.Users do
   """
   def create_user(account, attrs \\ %{}) do
     account
-    |> Ecto.build_assoc(:users)
+    |> Ecto.build_assoc(:user)
     |> User.changeset(attrs)
     |> Repo.insert()
   end
