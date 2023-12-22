@@ -12,10 +12,12 @@ defmodule ElixirApiWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   pipeline :auth do
     plug ElixirApiWeb.Auth.Pipeline
+    plug ElixirApiWeb.Auth.SetAccount
   end
 
   scope "/api", ElixirApiWeb do
