@@ -2,12 +2,16 @@ defmodule ElixirApiWeb.Router do
   use ElixirApiWeb, :router
   use Plug.ErrorHandler
 
-  defp handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
+  def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
     conn |> json(%{errors: message}) |> halt()
   end
 
-  defp handle_errors(conn, %{reason: %{message: message}}) do
+  def handle_errors(conn, %{reason: %{message: message}}) do
     conn |> json(%{errors: message}) |> halt()
+  end
+
+  def handle_errors(conn, _reason) do
+    conn |> json(%{errors: "Internal Server Error"}) |> halt()
   end
 
   pipeline :api do
@@ -31,5 +35,6 @@ defmodule ElixirApiWeb.Router do
   scope "/api", ElixirApiWeb do
     pipe_through [:api, :auth]
     get "/accounts/by_id/:id", AccountController, :show
+    post "/accounts/update", AccountController, :update
   end
 end
