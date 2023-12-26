@@ -47,6 +47,16 @@ defmodule ElixirApiWeb.AccountController do
     end
   end
 
+  def sign_out(conn, _params) do
+    account = conn.assigns.account
+    token = Guardian.Plug.current_token(conn)
+    Guardian.revoke(token)
+    conn
+    |> Plug.Conn.clear_session()
+    |> put_status(:ok)
+    |> render(:show, account: account)
+  end
+
   def show(conn, %{"id" => id}) do
     account = Accounts.get_account!(id)
     render(conn, :show, account: account)

@@ -34,6 +34,14 @@ config :elixir_api, ElixirApiWeb.Auth.Guardian,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :guardian, Guardian.DB,
+  # Add your repository module
+  repo: ElixirApi.Repo,
+  # default
+  schema_name: "guardian_tokens",
+  # default: 60 minutes
+  sweep_interval: 60
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
